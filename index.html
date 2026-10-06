@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoliageStride AI — Scenic Autumn Run & Park Route Explorer</title>
+  <meta name="description" content="An offline-first scenic running route builder powered by Google Gemma 2. Generates autumn foliage routes and pacing cues that get runners off screens and into nature.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Autumn Glow -->
+  <div class="ambient-glow glow-sunset"></div>
+  <div class="ambient-glow glow-canopy"></div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <div class="logo-icon">
+        <span class="logo-sym">🏃‍♂️</span>
+      </div>
+      <div>
+        <div class="brand-title">FoliageStride <span class="badge-tag">AI</span></div>
+        <div class="brand-subtitle">Scenic Run Club &bull; Touch Grass</div>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <div class="status-pill" id="aiStatusPill" title="Connected local open-weight model status">
+        <span class="status-dot"></span>
+        <span id="aiStatusText">Local Gemma 2 + Offline</span>
+      </div>
+
+      <button class="btn btn-secondary" id="btnModelSettings" title="Configure AI Model and Ollama Endpoint">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Model</span>
+      </button>
+
+      <button class="btn btn-secondary" id="btnExportLog" title="Export Running Log">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Export</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-strip">
+    <div class="hero-content">
+      <div class="hero-tag">🍁 Hacktoberfest Week 1: Touch Grass Challenge</div>
+      <h1 class="hero-title">Trade Treadmills &amp; Concrete for <em>Golden Tree Canopies</em></h1>
+      <p class="hero-desc">
+        Stop staring at pace charts on your phone. FoliageStride AI uses <strong>Google Gemma 2</strong> to build scenic autumn running routes with landmark foliage checkpoints so you can lace up, pocket your phone, and enjoy the open air.
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Workstation Layout -->
+  <main class="main-container">
+    <!-- Left Column: Route Builder Configurator -->
+    <section class="card-panel planner-panel">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="icon-bubble">🗺️</span>
+          <div>
+            <h2 class="card-title">Route Dispatcher</h2>
+            <p class="card-subtitle">Choose your distance, scenery, and workout vibe</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Distance Selection -->
+      <div class="form-section">
+        <label class="section-label">1. Select Target Distance:</label>
+        <div class="distance-grid" id="distanceGrid">
+          <button class="choice-card active" data-dist="2km">
+            <span class="choice-icon">⚡</span>
+            <span class="choice-name">2 km Quick Stride</span>
+            <span class="choice-desc">12-15 min recharge jog</span>
+          </button>
+          <button class="choice-card" data-dist="5km">
+            <span class="choice-icon">🏃</span>
+            <span class="choice-name">5 km Autumn Loop</span>
+            <span class="choice-desc">25-30 min scenic staple</span>
+          </button>
+          <button class="choice-card" data-dist="8km">
+            <span class="choice-icon">🍂</span>
+            <span class="choice-name">8 km Trail Explorer</span>
+            <span class="choice-desc">45-50 min long endurance run</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Scenery & Foliage Preference -->
+      <div class="form-section">
+        <label class="section-label">2. Preferred Scenery / Terrain:</label>
+        <div class="scenery-pills" id="sceneryPills">
+          <button class="pill-btn active" data-scenery="maple-canopy">🍁 Maple &amp; Oak Tree Canopy</button>
+          <button class="pill-btn" data-scenery="riverbank">🌊 Riverbank &amp; Pond Reflections</button>
+          <button class="pill-btn" data-scenery="park-perimeter">🌳 Historic Park &amp; Meadow Trails</button>
+          <button class="pill-btn" data-scenery="hilltop-ridge">⛰️ Hilltop Ridge Overlook</button>
+        </div>
+      </div>
+
+      <!-- Run Style / Vibe -->
+      <div class="form-section">
+        <label class="section-label">3. Running Style &amp; Pacing Vibe:</label>
+        <div class="vibe-chips" id="vibeChips">
+          <button class="chip-btn active" data-vibe="zone2">🧘 Zone 2 Chat Pace (Relaxed &amp; Mindful)</button>
+          <button class="chip-btn" data-vibe="tempo">⚡ Autumn Run Club Tempo (Brisk)</button>
+          <button class="chip-btn" data-vibe="fartlek">🍂 Fartlek Strides (Spur-of-the-moment bursts)</button>
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <div class="action-footer">
+        <button class="btn btn-primary btn-large" id="btnGenerateRoute">
+          <svg class="spin-icon hidden" id="genSpinner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-linecap="round"></circle>
+          </svg>
+          <span id="genBtnText">Synthesize Scenic Route</span>
+          <span class="btn-subtext">&bull; Powered by Gemma 2</span>
+        </button>
+      </div>
+
+      <!-- Pocket Running Timer Card -->
+      <div class="pocket-run-card">
+        <div class="pocket-header">
+          <span class="run-pulse"></span>
+          <div>
+            <div class="pocket-title">Hands-Free Run Session</div>
+            <div class="pocket-hint">Pocket your phone! Audio cadence chimes will mark kilometer checkpoints.</div>
+          </div>
+        </div>
+        <div class="run-timer-box">
+          <span id="runStopwatch">00:00</span>
+          <button class="btn-sm btn-ghost" id="btnToggleRun">Start Run</button>
+          <button class="btn-sm btn-danger" id="btnFinishRun">Finish &amp; Log</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Interactive Route Profile & Outdoor Log -->
+    <section class="card-panel route-panel">
+      <!-- Tabs -->
+      <div class="tab-header">
+        <button class="tab-btn active" data-tab="tab-route">
+          <span class="tab-icon">🍂</span> Active Route Profile
+        </button>
+        <button class="tab-btn" data-tab="tab-landmarks">
+          <span class="tab-icon">📍</span> Turn-by-Turn Landmarks
+        </button>
+        <button class="tab-btn" data-tab="tab-journal">
+          <span class="tab-icon">📔</span> Stride Journal (<span id="runLogCount">0</span>)
+        </button>
+      </div>
+
+      <!-- Tab 1: Active Route Profile -->
+      <div class="tab-content active" id="tab-route">
+        <div class="route-banner">
+          <div class="route-meta-row">
+            <span class="route-badge" id="distBadge">🏃 5.0 KM</span>
+            <span class="route-badge scenery-badge" id="sceneryBadge">🍁 Maple Canopy</span>
+            <span class="route-badge ai-badge" id="aiBadge">🧠 Gemma 2 Synthesized</span>
+          </div>
+          <h2 class="route-title" id="routeTitle">The Golden Maple &amp; Riverbank Loop</h2>
+          <p class="route-summary" id="routeSummary">A scenic 5 km loop designed to minimize road crossings, maximize golden fall foliage canopy, and provide soft trail surfaces underfoot.</p>
+        </div>
+
+        <!-- Elevation & Terrain Course Profile Graphic -->
+        <div class="elevation-card">
+          <div class="elevation-header">
+            <span>Course Elevation &amp; Foliage Density</span>
+            <span class="stat-highlight" id="elevationGain">↗️ +38m Smooth Roll</span>
+          </div>
+          <div class="course-profile-svg-box">
+            <svg viewBox="0 0 500 120" class="elevation-svg" preserveAspectRatio="none">
+              <!-- Gradient area -->
+              <defs>
+                <linearGradient id="elevGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#f97316" stop-opacity="0.4"/>
+                  <stop offset="100%" stop-color="#f97316" stop-opacity="0.0"/>
+                </linearGradient>
+              </defs>
+              <path d="M 0,90 Q 70,60 150,75 T 300,45 T 420,80 L 500,70 L 500,120 L 0,120 Z" fill="url(#elevGrad)"/>
+              <path d="M 0,90 Q 70,60 150,75 T 300,45 T 420,80 L 500,70" fill="none" stroke="#f97316" stroke-width="3"/>
+              <!-- Landmark markers -->
+              <circle cx="150" cy="75" r="5" fill="#fbbf24"/>
+              <circle cx="300" cy="45" r="5" fill="#10b981"/>
+              <circle cx="420" cy="80" r="5" fill="#38bdf8"/>
+            </svg>
+            <div class="profile-markers">
+              <span>Start (0 km)</span>
+              <span>🍁 Oak Avenue (2 km)</span>
+              <span>🌊 River Outlook (3.5 km)</span>
+              <span>Finish (5 km)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sensory Pacing & Breathwork Card -->
+        <div class="pacing-card">
+          <div class="pacing-icon">🌬️</div>
+          <div>
+            <h4 class="pacing-title">Sensory Cadence &amp; Breathwork Focus</h4>
+            <p class="pacing-body" id="pacingBody">
+              Maintain a steady 3:3 rhythm (inhale for 3 strides, exhale for 3 strides). Tune into the satisfying acoustic crunch of fallen dry leaves under your running shoes on unpaved gravel paths.
+            </p>
+          </div>
+        </div>
+
+        <!-- Log Run Session Box -->
+        <div class="log-run-box">
+          <h3>👟 Completed Your Outdoor Run? Log Your Stride:</h3>
+          <textarea id="runNotes" placeholder="How were the autumn colors today? Did you hit your rhythm? Write a quick sentence or two before stretching..."></textarea>
+          <button class="btn btn-emerald" id="btnSaveRunLog">
+            <span>Log Run &amp; Keep Outdoor Streak</span> 🏆
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Turn-by-Turn Landmarks -->
+      <div class="tab-content" id="tab-landmarks">
+        <div class="landmarks-intro">
+          <h3>📍 Scenic Turn-by-Turn Landmark Waypoints</h3>
+          <p>Commit these 4 visual checkpoints to memory in 20 seconds so you never need to look down at your screen during your run:</p>
+        </div>
+        <div class="waypoints-list" id="waypointsList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Tab 3: Stride Journal -->
+      <div class="tab-content" id="tab-journal">
+        <div class="journal-header">
+          <div>
+            <h3>📔 Your Scenic Running Journal</h3>
+            <p>Every outdoor run logs your kilometers and disconnects you from screens.</p>
+          </div>
+          <div class="streak-badge">
+            <span class="streak-num" id="runStreakNum">1</span>
+            <span class="streak-lbl">Runs Touched Grass</span>
+          </div>
+        </div>
+        <div class="journal-feed" id="runJournalFeed">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Model Settings Modal -->
+  <div class="modal-backdrop hidden" id="modelModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>⚙️ Open-Weight Model Configuration</h3>
+        <button class="btn-close" id="btnCloseModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          FoliageStride AI connects to local open-source models through <strong>Ollama</strong>. 100% offline, zero cloud API fees.
+        </p>
+
+        <div class="form-group">
+          <label for="ollamaEndpoint">Ollama API Endpoint:</label>
+          <input type="text" id="ollamaEndpoint" value="http://localhost:11434/api/generate">
+          <span class="form-help">Default local endpoint for Ollama daemon</span>
+        </div>
+
+        <div class="form-group">
+          <label for="modelName">Local Model Name:</label>
+          <select id="modelName">
+            <option value="gemma2:2b" selected>Google Gemma 2 (2B) — Fast &amp; Light (Recommended)</option>
+            <option value="gemma2:9b">Google Gemma 2 (9B)</option>
+            <option value="llama3.2:3b">Meta Llama 3.2 (3B)</option>
+            <option value="heuristic">Built-in Semantic Route Engine (Offline Fallback)</option>
+          </select>
+        </div>
+
+        <div class="test-connection-box">
+          <button class="btn btn-secondary" id="btnTestOllama">Test Ollama Connection</button>
+          <span id="testResult" class="test-feedback"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btnSaveModal">Save Configuration</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
